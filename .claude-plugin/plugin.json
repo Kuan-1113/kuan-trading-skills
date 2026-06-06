@@ -1,0 +1,13 @@
+{
+  "name": "kuan-trading-skills",
+  "version": "1.0.0",
+  "description": "Quantitative trading skills for Taiwan stocks and crypto — 9-Agent signal scoring, trend analysis, and monthly reports.",
+  "author": "Kuan-1113",
+  "license": "MIT",
+  "skills": [
+    "taiwan-stock-scan",
+    "crypto-trend",
+    "quant-report"
+  ],
+  "tags": ["trading", "taiwan-stock", "crypto", "quantitative", "signal", "discord"]
+}
