@@ -1,26 +1,35 @@
 # Kuan Trading Skills
 
-Quantitative trading skills for Claude Code — Taiwan stocks, crypto, futures, and risk management.
+The most comprehensive quantitative trading plugin for Claude Code — 9 skills covering Taiwan stocks, crypto, futures, options, and risk management.
 
 ## Skills
 
 ### `/taiwan-stock-scan`
-Taiwan equity signal scanner using 9-Agent joint scoring (TrendAgent, MomentumAgent, VolumeAgent, ChipAgent, VolatilityAgent, KeltnerAgent, FundamentalAgent, NewsAgent, SentimentAgent). Outputs ★★★/★★/★ rated signals with entry price, stop-loss, and analysis rationale. Targets 70–75% win rate.
+Taiwan equity signal scanner using 9-Agent joint scoring. Outputs ★★★/★★/★ rated signals with entry, stop-loss, and rationale. Targets 70–75% win rate.
 
 ### `/crypto-trend`
-Multi-strategy confluence analysis for cryptocurrency pairs using **live Binance data via CCXT**. 11 strategies across 4 gates. Outputs STRONG/MODERATE/WEAK signal with layered exit targets (Exit A: 40% position, Exit B: 60% position). Targets 87.5% win rate on trending setups.
+Live crypto analysis via **Binance CCXT** — 11 strategies across 4 gates. Layered exit system (Exit A 40% / Exit B 60%). Targets 87.5% win rate.
 
 ### `/quant-report`
-Generate structured performance reports from signal history data. Calculates win rates by star rating and agent, ranks indicator performance, and produces NotebookLM-ready analysis questions.
+Structured performance reports from signal history. Win rate by star rating, agent ranking, and NotebookLM-ready analysis questions.
 
 ### `/futures-query`
-Taiwan futures contract reference — 台指期, 小台, 電子期, 金融期, and US index futures. Includes margin requirements, P&L simulation, and liquidation warning calculator.
+Taiwan futures reference — 台指期, 小台, 電子期, 金融期, US index futures. Margin calculator, P&L simulation, liquidation warning.
 
 ### `/position-size`
-Optimal position sizing using Kelly Criterion, risk-based, or fixed fractional methods. Supports stocks (張) and futures (口). Input your account size, entry, and stop-loss — get the recommended position with full risk breakdown.
+Optimal position sizing — Kelly Criterion, risk-based, fixed fractional. Supports stocks (張) and futures (口). Full risk breakdown.
 
 ### `/fear-greed`
-Real-time market sentiment — fetches live **Crypto Fear & Greed Index** (alternative.me) and **CNN Fear & Greed Index**. Shows current score, trend vs yesterday, and trading implications.
+Live **Crypto Fear & Greed** (alternative.me) + **CNN Fear & Greed** index. Score, trend, and trading implications.
+
+### `/options-calc`
+Taiwan index options Greeks calculator (Black-Scholes). Delta, Gamma, Theta, Vega, Rho — plus theoretical price vs market price comparison and breakeven analysis.
+
+### `/sector-rotation`
+Live Taiwan sector ETF performance ranking via **yfinance**. Detects where money is flowing today — semiconductor, financials, electronics, high-dividend, and more.
+
+### `/trading-journal`
+Trading psychology analyzer. Paste your trade records — get bias diagnosis (loss aversion, revenge trading, anchoring), best/worst patterns, and concrete weekly improvement actions.
 
 ## Installation
 
@@ -28,20 +37,18 @@ Real-time market sentiment — fetches live **Crypto Fear & Greed Index** (alter
 claude plugins install Kuan-1113/kuan-trading-skills
 ```
 
-Or clone manually:
-```bash
-git clone https://github.com/Kuan-1113/kuan-trading-skills ~/.claude/plugins/kuan-trading-skills
-```
-
 ## Usage
 
 ```
-/taiwan-stock-scan     # Scan Taiwan stocks for signals
-/crypto-trend          # Analyze a crypto pair with live data
-/quant-report          # Generate performance report
-/futures-query         # Taiwan futures specs & margin calc
-/position-size         # Calculate optimal position size
-/fear-greed            # Live market sentiment index
+/taiwan-stock-scan    # Taiwan stock signals (9-Agent)
+/crypto-trend         # Live crypto analysis (Binance)
+/quant-report         # Performance report
+/futures-query        # Futures margin & P&L
+/position-size        # Kelly / risk-based sizing
+/fear-greed           # Live sentiment index
+/options-calc         # Options Greeks (Black-Scholes)
+/sector-rotation      # Taiwan sector rotation (live)
+/trading-journal      # Trade psychology analysis
 ```
 
 ## Author
