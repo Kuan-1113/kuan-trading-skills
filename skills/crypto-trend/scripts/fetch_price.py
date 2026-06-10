@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Fetch real OHLCV data and compute indicators for crypto-trend skill."""
 import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 import json
 from datetime import datetime, timezone
 
@@ -86,12 +88,28 @@ def main():
         symbol = symbol + "/USDT"
 
     exchange = ccxt.binance({"enableRateLimit": True})
+    futures = ccxt.binance({"options": {"defaultType": "future"}, "enableRateLimit": True})
 
     try:
         ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=100)
     except Exception as e:
         print(f"ERROR: Cannot fetch {symbol} — {e}")
         sys.exit(1)
+
+    # Gate5: Funding Rate + Open Interest
+    funding_rate = None
+    oi_usd = None
+    futures_symbol = symbol.replace("/USDT", "/USDT:USDT")
+    try:
+        fr = futures.fetch_funding_rate(futures_symbol)
+        funding_rate = fr.get("fundingRate")
+    except:
+        pass
+    try:
+        oi = futures.fetch_open_interest(futures_symbol)
+        oi_usd = oi.get("openInterestValue")
+    except:
+        pass
 
     if not ohlcv or len(ohlcv) < 30:
         print(f"ERROR: Not enough data for {symbol}")
@@ -140,10 +158,35 @@ def main():
     gate3 = "PASS" if (gate3_kc or gate3_bb) else "WEAK"
     gate4 = "PASS" if vol_ratio >= 1.5 and obv_trend == "RISING" else ("WEAK" if vol_ratio >= 1.2 else "FAIL")
 
+    # Gate5: Market Sentiment (Funding Rate + OI)
+    gate5 = "NEUTRAL"
+    gate5_note = ""
+    if funding_rate is not None:
+        fr_pct = funding_rate * 100
+        if fr_pct > 0.05:
+            gate5 = "WARN"
+            gate5_note = f"資金費率過高(+{fr_pct:.3f}%)，多頭擁擠，追高風險大"
+        elif fr_pct < -0.03:
+            gate5 = "PASS"
+            gate5_note = f"資金費率為負({fr_pct:.3f}%)，空頭擁擠，反彈偏多"
+        elif 0 <= fr_pct <= 0.05:
+            gate5 = "PASS"
+            gate5_note = f"資金費率健康({fr_pct:.3f}%)，無過熱"
+        else:
+            gate5 = "NEUTRAL"
+            gate5_note = f"資金費率({fr_pct:.3f}%)"
+    else:
+        gate5_note = "無永續合約數據（現貨幣種）"
+
     gates = [gate1, gate2, gate3, gate4]
     pass_count = sum(1 for g in gates if g == "PASS")
     weak_count = sum(1 for g in gates if g == "WEAK")
     score = pass_count + weak_count * 0.5
+    # Gate5 WARN 扣分，PASS 加分
+    if gate5 == "WARN":
+        score -= 0.5
+    elif gate5 == "PASS" and funding_rate is not None:
+        score += 0.3
 
     if score >= 3.5:
         strength = "STRONG"
@@ -176,14 +219,17 @@ Volume Ratio (vs 20-avg): {vol_ratio}x
 OBV Trend: {obv_trend}
 
 --- Gate Scores ---
-Gate 1 (Trend/EMA):     {gate1}
-Gate 2 (Momentum/MACD): {gate2}
-Gate 3 (Volatility/KC): {gate3}
-Gate 4 (Volume/OBV):    {gate4}
+Gate 1 (Trend/EMA):        {gate1}
+Gate 2 (Momentum/MACD):    {gate2}
+Gate 3 (Volatility/KC):    {gate3}
+Gate 4 (Volume/OBV):       {gate4}
+Gate 5 (Sentiment/FR+OI):  {gate5}  {gate5_note}
+Open Interest: {f"${oi_usd/1e6:.1f}M" if oi_usd else "N/A"}
 
 --- Signal Summary ---
 Signal Strength: {strength}
 Direction: {direction}
+Score: {round(score,2)}/4.3
 === END DATA ===
 """)
 

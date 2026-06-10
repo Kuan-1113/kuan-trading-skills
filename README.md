@@ -1,6 +1,6 @@
 # Kuan Trading Skills
 
-The most comprehensive quantitative trading plugin for Claude Code — 9 skills covering Taiwan stocks, crypto, futures, options, and risk management.
+The most comprehensive quantitative trading plugin for Claude Code — 10 skills covering Taiwan stocks, crypto, futures, options, risk management, and trading script debugging.
 
 ## Skills
 
@@ -31,6 +31,9 @@ Live Taiwan sector ETF performance ranking via **yfinance**. Detects where money
 ### `/trading-journal`
 Trading psychology analyzer. Paste your trade records — get bias diagnosis (loss aversion, revenge trading, anchoring), best/worst patterns, and concrete weekly improvement actions.
 
+### `/bug-finder`
+4-layer Python trading script debugger. Finds crash bugs, silent calculation errors, logic flaws, and performance issues. Paste your code or error message — get a ranked bug list with exact fix code.
+
 ## Installation
 
 ```bash
@@ -49,6 +52,7 @@ claude plugins install Kuan-1113/kuan-trading-skills
 /options-calc         # Options Greeks (Black-Scholes)
 /sector-rotation      # Taiwan sector rotation (live)
 /trading-journal      # Trade psychology analysis
+/bug-finder           # Python trading script debugger (4-layer)
 ```
 
 ## Author

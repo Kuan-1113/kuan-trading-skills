@@ -43,7 +43,7 @@ def get_change(ticker, days=1):
         return None, None
 
 def bar(change, width=10):
-    if change is None:
+    if change is None or change != change:  # None or NaN
         return "N/A"
     filled = min(int(abs(change) / 0.5), width)
     if change >= 0:
